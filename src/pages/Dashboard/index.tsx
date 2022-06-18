@@ -1,30 +1,28 @@
 import React, { FC, useEffect, useState } from 'react'
-import { Layout, Menu, Spin } from 'antd'
+import { Layout, Menu, Spin, Avatar } from 'antd'
 import Inventory from '../Inventory'
-import { getInventory } from '../../api/services'
+import { getProgram } from '../../api/services'
 import Availability from '../Availability'
 import Programs from '../Programs'
 import './index.css'
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
-  UploadOutlined
+  UserOutlined
 } from '@ant-design/icons'
 
 const { Header, Sider, Content } = Layout
 
 const Dashboard: FC = () => {
   useEffect(() => {
-    getInventory()
-      .then(response => setInventory(response.data.data))
-      .catch(error => console.log(error.response.data.error.message))
+    getProgram()
+      .then(response => setPrograms(response.data.data))
+      .catch(error => console.log(error))
   }, [])
 
   const [collapsed, setCollapsed] = useState(false)
   const [menuSelected, setmenuSelected] = useState('1')
-  const [inventory, setInventory] = useState([])
+  const [programs, setPrograms] = useState([])
   const [spin, setSpin] = useState({
     tips: 'Cargando datos...',
     loading: false
@@ -41,7 +39,7 @@ const Dashboard: FC = () => {
   const ContentToShow = (item: any) => {
     switch (item) {
       case '1':
-        return <Inventory inventory={inventory}/>
+        return <Inventory programs={programs} />
       case '2':
         return <Programs />
       case '3':
@@ -54,7 +52,13 @@ const Dashboard: FC = () => {
   return (
     <Layout style={{ height: '100%' }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div className='logo'>go</div>
+        <div style={{ padding: '10px' }}>
+          {collapsed ? (
+            <Avatar size="large" icon={<UserOutlined />} />
+          ) : (
+            <Avatar size={64} icon={<UserOutlined />} />
+          )}
+        </div>
         <Menu
           theme='dark'
           mode='inline'
@@ -66,16 +70,6 @@ const Dashboard: FC = () => {
               icon: <UserOutlined />,
               label: 'Inventario'
             }
-            // {
-            //   key: '2',
-            //   icon: <VideoCameraOutlined />,
-            //   label: 'Programas'
-            // },
-            // {
-            //   key: '3',
-            //   icon: <UploadOutlined />,
-            //   label: 'Disponibilidad'
-            // }
           ]}
         />
       </Sider>

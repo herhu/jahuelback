@@ -1,16 +1,9 @@
 import axios from "axios";
-
+import { IInventoryHotel } from '../../interfaces/IInventory'
 const instance = axios.create({
-    baseURL: 'http://localhost:3000/api',
-    timeout: 1000,
-    headers: { 'X-Custom-Header': 'foobar' }
+    baseURL: 'http://localhost:3000/api'
 });
 
-interface userLogged {
-    username: string,
-    email: string,
-    token: string
-}
 
 export const signIn = async (email: string, password: string) => {
     return instance.post('/auth/signin', {
@@ -19,4 +12,7 @@ export const signIn = async (email: string, password: string) => {
     })
 }
 
+export const getProgram = async () => instance.get('/backoffice/program')
+
 export const getInventory = async () => instance.get('/backoffice/inventory')
+export const saveInventory = async (post: IInventoryHotel) => instance.post('/backoffice/inventory', post)

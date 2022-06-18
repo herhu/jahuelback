@@ -1,91 +1,136 @@
-import React, { FC } from 'react'
-import ReactDOM from 'react-dom'
+import React, { useState, useEffect } from 'react'
 import Calendar from '../../components/Calendar'
-import Select from '../../components/Select'
-import Button from '../../components/Button'
-import { Divider, DatePicker, Space, InputNumber } from 'antd'
-import { IInventory } from '../../interfaces/IInventory'
+import { Divider, DatePicker, InputNumber, Select, Form, Button } from 'antd'
+import { DayPilot } from 'daypilot-pro-react'
+import { IprogramOracle } from '../../interfaces/IProgram'
+import { IInventoryHotel } from '../../interfaces/IInventory'
+import { getInventory, saveInventory } from '../../api/services'
 import 'antd/dist/antd.css'
+import { PopoverPicker } from '../../components/PopoverPicker'
 
 const { RangePicker } = DatePicker
 
+const { Option } = Select
+
 interface TProps {
-  inventory: IInventory[]
+  programs: IprogramOracle[]
+}
+
+const validateMessages = {
+  required: '${label} es obligatorio!',
+  number: {
+    range: '${label} debe de ser entre ${min} y ${max}'
+  }
 }
 
 const Inventory = (props: TProps) => {
-  function onChange (value: any) {
-    console.log('changed', value)
+  const [inventories, setInventories] = useState<IInventoryHotel[]>([])
+  const [dates, setDates] = useState<Array<String>>([])
+  const [color, setColor] = useState('#aabbcc')
+  const [form] = Form.useForm()
+
+  useEffect(() => {
+    getInventory()
+      .then(response => setInventories(response.data.data))
+      .catch(error => console.log(error))
+  }, [])
+
+  const building = async (values: any) => {
+    let post = {
+      rooms: props.programs[values.programa].ROOMS,
+      program: props.programs[values.programa].PROGRAM,
+      text: props.programs[values.programa].PROGRAM,
+      backColor: color,
+      start: dates[0].toString(),
+      end: dates[1].toString(),
+      id: DayPilot.guid(),
+      active: true
+    }
+
+    post.rooms.map(room => {
+      switch (room.ROOM_TYPE) {
+        case Object.keys(values)[2]:
+          room.QUANTITY = Object.values(values)[2] as number
+          break
+        case Object.keys(values)[3]:
+          room.QUANTITY = Object.values(values)[3] as number
+          break
+        case Object.keys(values)[4]:
+          room.QUANTITY = Object.values(values)[4] as number
+          break
+        default:
+          room.QUANTITY = 0
+          break
+      }
+    })
+
+    return post
+  }
+
+  const onFinish = async (values: any) => {
+    let post = await building(values)
+    form.resetFields()
+    saveInventory(post)
+      .then(response =>
+        setInventories([...inventories, response.data.inventory])
+      )
+      .catch(error => console.log(error))
   }
 
   return (
     <div>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-around',
-          marginBottom: '10'
-        }}
+      <Form
+        onFinish={onFinish}
+        form={form}
+        validateMessages={validateMessages}
+        style={{ display: 'flex', justifyContent: 'space-between' }}
       >
-        <Select placeholder={'Seleccione Programa'} />
-        <RangePicker
-          placeholder={['Fecha entrada', 'Fecha salida']}
-          onChange={(e, a) => console.log(e, a)}
-        />
-        <Space size={'large'}>
-          <Button name={'Cargar'} />
-        </Space>
-      </div>
-      <Divider />
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-around',
-          marginBottom: '10'
-        }}
-      >
-        <div>
-          <Space size={'large'}>
-            <span>Superior</span>
-            <InputNumber
-              placeholder={'Cantidad'}
-              min={1}
-              max={10}
-              defaultValue={3}
-              onChange={onChange}
-            />
-          </Space>
-        </div>
-        <div>
-          <Space size={'large'}>
-            <span>Vip</span>
-            <InputNumber
-              placeholder={'Cantidad'}
-              min={1}
-              max={10}
-              defaultValue={3}
-              onChange={onChange}
-            />
-          </Space>
-        </div>
-        <div>
-          <Space size={'large'}>
-            <span>Clasica</span>
-            <InputNumber
-              placeholder={'Cantidad'}
-              min={1}
-              max={10}
-              defaultValue={3}
-              onChange={onChange}
-            />
-          </Space>
-        </div>
-      </div>
+        <Form.Item name={['programa']} rules={[{ required: true }]}>
+          <Select allowClear placeholder={'Programas'}>
+            {props.programs.map((q, i) => (
+              <Option key={i}>{q.PROGRAM}</Option>
+            ))}
+          </Select>
+        </Form.Item>
+        <Form.Item name={['fecha']} rules={[{ required: true }]}>
+          <RangePicker
+            placeholder={['Fecha entrada', 'Fecha salida']}
+            onChange={(e, a) => setDates(a)}
+          />
+        </Form.Item>
+        <Form.Item
+          name={['Superior']}
+          rules={[{ required: true, type: 'number', min: 1, max: 10 }]}
+          label='Superior'
+        >
+          <InputNumber placeholder={'Cantidad'} min={1} max={10} />
+        </Form.Item>
+        <Form.Item
+          name={['Vip']}
+          rules={[{ required: true, type: 'number', min: 1, max: 10 }]}
+          label='Vip'
+        >
+          <InputNumber placeholder={'Cantidad'} min={1} max={10} />
+        </Form.Item>
+        <Form.Item
+          name={['Clasicas']}
+          rules={[{ required: true, type: 'number', min: 1, max: 10 }]}
+          label='Clasica'
+        >
+          <InputNumber placeholder={'Cantidad'} min={1} max={10} />
+        </Form.Item>
+        <Form.Item>
+          <Button type='primary' htmlType='submit'>
+            Cargar
+          </Button>
+        </Form.Item>
+        <Form.Item>
+          <PopoverPicker color={color} onChange={setColor} />
+        </Form.Item>
+      </Form>
       <Divider />
       <div>
-        <Space direction='vertical' size={'large'}>
-          <Calendar inventory={props.inventory} />
-        </Space>
+        <Calendar programs={props.programs} inventories={inventories} />
       </div>
     </div>
   )

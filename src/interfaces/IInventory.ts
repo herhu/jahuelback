@@ -1,11 +1,12 @@
-import { IRoom } from './IRoom'
-import { IProgram } from './IProgram'
+import { IroomOracle } from './IRoom'
 
-export interface IInventory {
-    rooms: Array<IRoom>
-    programs: Array<IProgram>
-    description: String
-    start: Date
-    end: Date
-    available: boolean
-}
+export interface IInventoryHotel {
+    active: boolean
+    text: string
+    id: string
+    backColor?: string
+    program: string
+    start: string
+    end: string
+    rooms: Array<IroomOracle>
+} 

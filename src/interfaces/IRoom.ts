@@ -5,3 +5,21 @@ export interface IRoom {
     available: number;
     sold: number
 }
+
+export interface IroomOracle {
+    ROOM_TYPE: string
+    RATE_CODE: string
+    DESCRIPTION: string
+    BEGIN_DATE: Date
+    END_DATE: Date
+    MONDAY: string
+    TUESDAY: string
+    WEDNESDAY: string
+    THURSDAY: string
+    FRIDAY: string
+    SATURDAY: string
+    SUNDAY: string
+    SINGLE: number
+    DOUBLE: number
+    QUANTITY?: number
+}

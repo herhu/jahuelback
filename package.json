@@ -14,6 +14,7 @@
     "axios": "^0.27.2",
     "daypilot-pro-react": "https://npm.daypilot.org/daypilot-pro-react/trial/2022.2.5332.tar.gz",
     "eact": "^0.0.1-security",
+    "react-colorful": "^5.5.1",
     "react-dom": "^18.1.0",
     "react-draggable": "^4.4.5",
     "react-router-dom": "^6.3.0",

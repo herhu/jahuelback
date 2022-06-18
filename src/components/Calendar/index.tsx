@@ -1,72 +1,56 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import 'antd/dist/antd.css'
 import './index.css'
-import { IlistData } from '../../interfaces/Icalendar'
-import { Calendar, Badge } from 'antd'
-import moment from 'moment'
-import { IInventory } from '../../interfaces/IInventory'
+import { DayPilot, DayPilotMonth } from 'daypilot-pro-react'
+import { IprogramOracle } from '../../interfaces/IProgram'
+import { IInventoryHotel } from '../../interfaces/IInventory'
 
 import Modal from '../modal'
 
 interface TProps {
-  inventory: IInventory[]
+  programs: IprogramOracle[]
+  inventories: IInventoryHotel[]
 }
 
 const CCalendar = (props: TProps) => {
-  const [visible, setVisible] = useState(false)
-  const [currDate, setCurrDate] = useState(moment())
-  const [numRefThisMonth, setNumRefThisMonth] = useState(0)
-  const [listOfRefsByDate, setListOfRefsByDate] = useState([])
-
   useEffect(() => {
-    console.log(`from Use STATE::Month is ${currDate.month() + 1}`)
-    let tempState = {} as any
-
-    setNumRefThisMonth(props.inventory.length) // 3
-
-    props.inventory.map(day => {
-      const dayNum = day.start.toString().substring(8, 10) // my days
-
-      if (tempState.hasOwnProperty(dayNum)) {
-        // create a object with key as day with data and value as quantity of data
-        tempState[dayNum]++
-      } else {
-        tempState[dayNum] = 1
-      }
-    })
-
-    setListOfRefsByDate(tempState)
-  }, [currDate])
-
-  function dateCellRender (value: any) {
-    let listData = [] as IlistData[]
-
-    const currDateRender =
-      value.date() < 10
-        ? '0' + value.date().toString()
-        : value.date().toString() // add 0 to the current
-
-    if (
-      listOfRefsByDate.hasOwnProperty(currDateRender) &&
-      value.month() === currDate.month()
-    ) {
-      listData = [
-        {
-          status: 'success',
-          content: `${listOfRefsByDate[currDateRender]} habilitados`
+    setConfig({
+      locale: 'es-es',
+      showWeekend: true,
+      startDate: DayPilot.Date.today(),
+      onTimeRangeSelected: async (args: any) => {
+        const modal = await DayPilot.Modal.prompt(
+          'Create a new event:',
+          'Event 1'
+        )
+        const dp = args.control
+        dp.clearSelection()
+        if (modal.canceled) {
+          return
         }
-      ]
-    }
-    return (
-      <ul className='events'>
-        {listData.map((item, index) => (
-          <li key={index}>
-            <Badge status={'success'} text={item.content} />
-          </li>
-        ))}
-      </ul>
-    )
-  }
+        dp.events.add({
+          start: args.start,
+          end: args.end,
+          id: DayPilot.guid(),
+          text: modal.result
+        })
+      },
+      onEventMoved: (args: any) => {
+        args.control.message('Event moved: ' + args.e.text())
+      },
+      onEventResized: (args: any) => {
+        args.control.message('Event resized: ' + args.e.text())
+      },
+
+      onEventClicked: (args: any) => {
+        args.control.message('Event clicked: ' + args.e.text())
+      },
+      events: props.inventories
+    })
+  },[props.inventories])
+
+  const [visible, setVisible] = useState(false)
+  const [config, setConfig] = useState({})
 
   return (
     <>
@@ -75,13 +59,8 @@ const CCalendar = (props: TProps) => {
         onOk={() => setVisible(false)}
         onCancel={() => setVisible(false)}
       />
-
-      <Calendar
-        dateCellRender={dateCellRender}
-        onSelect={() => setVisible(true)}
-      />
+      <DayPilotMonth {...config} />
     </>
   )
 }
-
 export default CCalendar

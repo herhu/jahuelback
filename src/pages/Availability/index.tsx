@@ -1,9 +1,6 @@
 import React, { FC } from 'react'
-import ReactDOM from 'react-dom'
-import Calendar from '../../components/Calendar'
-import Select from '../../components/Select'
 import Button from '../../components/Button'
-import { Divider, DatePicker, Space, InputNumber, Tooltip } from 'antd'
+import { Divider, DatePicker, Space, InputNumber } from 'antd'
 import 'antd/dist/antd.css'
 
 const { RangePicker } = DatePicker
@@ -27,7 +24,7 @@ const Availability: FC = () => {
           onChange={(e, a) => console.log(e, a)}
         />
 
-        <Select placeholder={'Seleccione Habitación'} />
+        {/* <Select placeholder={'Seleccione Habitación'} /> */}
 
           <InputNumber value={14} disabled />
 
