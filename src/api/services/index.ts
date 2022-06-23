@@ -1,7 +1,7 @@
 import axios from "axios";
 import { IInventoryHotel } from '../../interfaces/IInventory'
 const instance = axios.create({
-    baseURL: 'https://pagos.jahuel.cl/v1'
+    baseURL: 'https://pagos.jahuel.cl/api/v1'
 });
 
 
