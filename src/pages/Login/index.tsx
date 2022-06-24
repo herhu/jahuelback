@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Form, Input, Button, Checkbox } from 'antd'
+import { Form, Input, Button, notification, Checkbox } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { signIn } from '../../api/services'
 
@@ -11,14 +11,24 @@ interface TUser {
   role: string
 }
 
-const Demo: FC = () => {
+type NotificationType = 'success' | 'info' | 'warning' | 'error'
 
+const Demo: FC = () => {
   const navigate = useNavigate()
+
+  const openNotificationWithIcon = (type: NotificationType, text: string) => {
+    notification[type]({
+      message: 'Error al iniciar session',
+      description: text
+    })
+  }
 
   const onFinish = (values: TUser) => {
     signIn(values.email, values.password)
-      .then(response =>  navigate('/home'))
-      .catch(error => console.log(error.response.data.error.message))
+      .then(response => navigate('/home'))
+      .catch(error =>
+        openNotificationWithIcon('error', error.response.data.errors.message)
+      )
   }
 
   const onFinishFailed = (errorInfo: any) => {
@@ -38,7 +48,7 @@ const Demo: FC = () => {
         name='basic'
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
-        initialValues={{ remember: true, email:'herhuglz@gmail.com' }}
+        initialValues={{ remember: true, email: 'admin@admin.com' }}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         autoComplete='off'
