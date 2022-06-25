@@ -50,16 +50,20 @@ const Inventory = (props: TProps) => {
     post.rooms.map(room => {
       switch (room.ROOM_TYPE) {
         case Object.keys(values)[2]:
-          room.QUANTITY = Object.values(values)[2] as number
+          room.INVENTORY = Object.values(values)[2] as number
+          room.AVAILABLE = Object.values(values)[2] as number
           break
         case Object.keys(values)[3]:
-          room.QUANTITY = Object.values(values)[3] as number
+          room.INVENTORY = Object.values(values)[3] as number
+          room.AVAILABLE = Object.values(values)[3] as number
           break
         case Object.keys(values)[4]:
-          room.QUANTITY = Object.values(values)[4] as number
+          room.INVENTORY = Object.values(values)[4] as number
+          room.AVAILABLE = Object.values(values)[4] as number
           break
         default:
-          room.QUANTITY = 0
+          room.INVENTORY = 0
+          room.AVAILABLE = 0
           break
       }
     })
@@ -100,24 +104,24 @@ const Inventory = (props: TProps) => {
         </Form.Item>
         <Form.Item
           name={['Superior']}
-          rules={[{ required: true, type: 'number', min: 1, max: 10 }]}
-          label='Superior'
+          rules={[{ required: true, type: 'number', min: 1, max: 46 }]}
+          label='Superior(46)'
         >
-          <InputNumber placeholder={'Cantidad'} min={1} max={10} />
+          <InputNumber placeholder={'Cantidad'} min={1} max={46} />
         </Form.Item>
         <Form.Item
           name={['Vip']}
-          rules={[{ required: true, type: 'number', min: 1, max: 10 }]}
-          label='Vip'
+          rules={[{ required: true, type: 'number', min: 1, max: 14 }]}
+          label='Vip(14)'
         >
-          <InputNumber placeholder={'Cantidad'} min={1} max={10} />
+          <InputNumber placeholder={'Cantidad'} min={1} max={14} />
         </Form.Item>
         <Form.Item
           name={['Clasicas']}
-          rules={[{ required: true, type: 'number', min: 1, max: 10 }]}
-          label='Clasica'
+          rules={[{ required: true, type: 'number', min: 1, max: 20 }]}
+          label='Clasica(20)'
         >
-          <InputNumber placeholder={'Cantidad'} min={1} max={10} />
+          <InputNumber placeholder={'Cantidad'} min={1} max={20} />
         </Form.Item>
         <Form.Item>
           <Button type='primary' htmlType='submit'>

@@ -1,7 +1,7 @@
 export interface IRoom {
     name: string;
     description: string;
-    quantity: number;
+    inventory: number;
     available: number;
     sold: number
 }
@@ -21,5 +21,6 @@ export interface IroomOracle {
     SUNDAY: string
     SINGLE: number
     DOUBLE: number
-    QUANTITY?: number
+    INVENTORY?: number
+    AVAILABLE?: number;
 }
