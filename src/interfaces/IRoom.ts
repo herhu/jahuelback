@@ -23,4 +23,5 @@ export interface IroomOracle {
     DOUBLE: number
     INVENTORY?: number
     AVAILABLE?: number;
+    SOLD: number
 }

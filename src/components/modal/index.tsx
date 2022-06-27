@@ -6,9 +6,11 @@ import {
   Statistic,
   Tabs,
   Divider,
+  Skeleton,
   Tag
 } from 'antd'
 import { IInventoryHotel } from '../../interfaces/IInventory'
+import { IroomOracle } from '../../interfaces/IRoom'
 
 interface Tprops {
   inventory: IInventoryHotel
@@ -23,38 +25,57 @@ const { TabPane } = Tabs
 
 const App = (props: Tprops) => {
   const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [room, setRoom] = useState<IroomOracle>()
 
   useEffect(() => {
     if (props.inventory) {
       setSelectedTags([props.inventory.rooms[0].ROOM_TYPE])
+      setRoom(props.inventory.rooms[0])
     }
   }, [props.inventory])
 
-  const handleChange = (tag: string, checked: boolean) => {
+  const handleChange = (tag: string, checked: boolean, room: IroomOracle) => {
     const nextSelectedTags = checked
       ? [tag]
       : selectedTags.filter(t => t !== tag)
     setSelectedTags(nextSelectedTags)
+    console.log(room)
+    setRoom(room)
   }
 
   const renderContent = (column = 1) => (
-    <React.Fragment>
+    <Skeleton active loading={props.inventory ? false : true}>
       <Descriptions size='small' style={{ width: '50%' }} column={column}>
-        <Descriptions.Item label='Created'>Lili Qu</Descriptions.Item>
-        <Descriptions.Item label='Association'>
-          <a>421421</a>
+        <Descriptions.Item label='Precio Single'>
+          <a> {room && room.SINGLE}</a>
         </Descriptions.Item>
-        <Descriptions.Item label='Creation Time'>2017-10-10</Descriptions.Item>
-        <Descriptions.Item label='Effective Time'>2017-10-10</Descriptions.Item>
-        <Descriptions.Item label='Remarks'>
-          Gonghu Road, Xihu District, Hangzhou, Zhejiang, China
+        <Descriptions.Item label='Precio Double'>
+          <a> {room && room.DOUBLE}</a>
+        </Descriptions.Item>
+        <Descriptions.Item label='Cantidad a vender'>
+          {room && room.AVAILABLE}
+        </Descriptions.Item>
+        <Descriptions.Item label='Cantidad  vendidas'>
+          {room && room.SOLD}
+        </Descriptions.Item>
+        <Descriptions.Item label='Cantidad disponibles'>
+          {room && room.INVENTORY}
+        </Descriptions.Item>
+        <Descriptions.Item label='Días disponibles'>
+          {room &&
+            `${room.MONDAY === 'Y' ? 'Lunes, ' : ''} 
+             ${room.TUESDAY === 'Y' ? 'Martes, ' : ''} 
+             ${room.WEDNESDAY === 'Y' ? 'Miercoles, ' : ''} 
+             ${room.THURSDAY === 'Y' ? 'Jueves, ' : ''} 
+             ${room.FRIDAY === 'Y' ? 'Viernes, ' : ''} 
+             ${room.SATURDAY === 'Y' ? 'Sabado, ' : ''}
+             ${room.SUNDAY === 'Y' ? 'Domingo' : ''} `}
         </Descriptions.Item>
       </Descriptions>
 
       <div style={{ width: '50%' }}></div>
-    </React.Fragment>
+    </Skeleton>
   )
-
   const extraContent = (
     <div
       style={{
@@ -76,7 +97,6 @@ const App = (props: Tprops) => {
       />
     </div>
   )
-
   const Content: React.FC<{
     children: React.ReactNode
     extra: React.ReactNode
@@ -87,7 +107,7 @@ const App = (props: Tprops) => {
             <CheckableTag
               key={i}
               checked={selectedTags.indexOf(room.ROOM_TYPE) > -1}
-              onChange={checked => handleChange(room.ROOM_TYPE, checked)}
+              onChange={checked => handleChange(room.ROOM_TYPE, checked, room)}
             >
               {room.ROOM_TYPE}
             </CheckableTag>
@@ -101,8 +121,6 @@ const App = (props: Tprops) => {
       <div className='extra'>{extra}</div>
     </div>
   )
-
-  console.log('inventory', props.inventory)
 
   return (
     <Modal
@@ -125,7 +143,7 @@ const App = (props: Tprops) => {
                 ? props.inventory.active === true
                   ? '1'
                   : '2'
-                : ''
+                : '2'
             }
           >
             <TabPane tab='Público' key='1' />
