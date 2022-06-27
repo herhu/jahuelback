@@ -4,7 +4,12 @@ import './index.css'
 import { DayPilot, DayPilotMonth } from 'daypilot-pro-react'
 import { Space, Divider, Statistic } from 'antd'
 import { IprogramOracle } from '../../interfaces/IProgram'
-import { IInventoryHotel } from '../../interfaces/IInventory'
+import { openNotificationWithIcon } from '../../components/Notification'
+import {
+  IInventoryHotel,
+  IUpdateDateInventory
+} from '../../interfaces/IInventory'
+import { updateDateInventory } from '../../api/services/jahuel'
 
 import Modal from '../modal'
 
@@ -12,16 +17,6 @@ interface TProps {
   programs: IprogramOracle[]
   inventories: IInventoryHotel[]
 }
-
-// interface Tconfig {
-//   locale: string
-//   showWeekend: boolean
-//   startDate: DayPilot.Date
-//   onTimeRangeSelected: (args: any) => Promise<void>
-//   onEventMoved: (args: any) => void
-//   onEventResized: (args: any) => void
-//   events: IInventoryHotel[]
-// }
 
 const CCalendar = (props: TProps) => {
   const [visible, setVisible] = useState(false)
@@ -34,28 +29,19 @@ const CCalendar = (props: TProps) => {
       locale: 'es-es',
       showWeekend: true,
       startDate: date,
-      // onTimeRangeSelected: async (args: any) => {
-      //   const modal = await DayPilot.Modal.prompt(
-      //     'Create a new event:',
-      //     'Event 1'
-      //   )
-      //   const dp = args.control
-      //   dp.clearSelection()
-      //   if (modal.canceled) {
-      //     return
-      //   }
-      //   dp.events.add({
-      //     start: args.start,
-      //     end: args.end,
-      //     id: DayPilot.guid(),
-      //     text: modal.result
-      //   })
-      // },
       onEventMoved: (args: any) => {
         args.control.message('Event moved: ' + args.e.text())
+        updateDateIn(args.e.data.id, {
+          start: args.newStart.value,
+          end: args.newEnd.value
+        })
       },
       onEventResized: (args: any) => {
         args.control.message('Event resized: ' + args.e.text())
+        updateDateIn(args.e.data.id, {
+          start: args.newStart.value,
+          end: args.newEnd.value
+        })
       },
       onEventClicked: (args: any) => {
         args.control.message('Event clicked: ' + args.e.text())
@@ -66,6 +52,11 @@ const CCalendar = (props: TProps) => {
     })
   }, [date, props.inventories])
 
+  const updateDateIn = (id: string, data: IUpdateDateInventory) => {
+    updateDateInventory(id, data)
+      .then(() => openNotificationWithIcon('success', 'Fechas ctualizadas conrrectamente'))
+      .catch(() => openNotificationWithIcon('error', 'No se ha podido actualizar el calendario'))
+  }
   const previous = () => {
     let previousDate = date.addMonths(-1)
     setDate(previousDate)

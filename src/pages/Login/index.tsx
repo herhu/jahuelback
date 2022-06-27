@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
-import { Form, Input, Button, notification, Checkbox } from 'antd'
+import { Form, Input, Button, Checkbox } from 'antd'
 import { useNavigate } from 'react-router-dom'
-import { signIn } from '../../api/services'
+import { login } from '../../api/services/auth'
 
 interface TUser {
   id: string
@@ -11,24 +11,15 @@ interface TUser {
   role: string
 }
 
-type NotificationType = 'success' | 'info' | 'warning' | 'error'
-
 const Demo: FC = () => {
   const navigate = useNavigate()
 
-  const openNotificationWithIcon = (type: NotificationType, text: string) => {
-    notification[type]({
-      message: 'Error al iniciar session',
-      description: text
+  const onFinish = async (values: TUser) => {
+    let response = await login({
+      email: values.email,
+      password: values.password
     })
-  }
-
-  const onFinish = (values: TUser) => {
-    signIn(values.email, values.password)
-      .then(response => navigate('/home'))
-      .catch(error =>
-        openNotificationWithIcon('error', error.response.data.errors.message)
-      )
+    response && navigate('home')
   }
 
   const onFinishFailed = (errorInfo: any) => {

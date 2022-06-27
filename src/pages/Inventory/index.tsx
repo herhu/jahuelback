@@ -12,7 +12,7 @@ import {
 import { DayPilot } from 'daypilot-pro-react'
 import { IprogramOracle } from '../../interfaces/IProgram'
 import { IInventoryHotel } from '../../interfaces/IInventory'
-import { getInventory, saveInventory } from '../../api/services'
+import { getInventory, saveInventory } from '../../api/services/jahuel'
 import 'antd/dist/antd.css'
 import { PopoverPicker } from '../../components/PopoverPicker'
 

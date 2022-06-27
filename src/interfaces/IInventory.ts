@@ -10,3 +10,8 @@ export interface IInventoryHotel {
     end: string
     rooms: Array<IroomOracle>
 } 
+
+export interface IUpdateDateInventory {
+    start: string,
+    end: string
+}

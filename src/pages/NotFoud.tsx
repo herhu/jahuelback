@@ -1,6 +1,7 @@
-import { Result, Button } from 'antd';
+import { Button, Result } from 'antd';
+import React from 'react';
 
-export default () => (
+const App: React.FC = () => (
   <Result
     status="404"
     title="404"
@@ -8,3 +9,5 @@ export default () => (
     extra={<Button type="primary">Back Home</Button>}
   />
 );
+
+export default App;

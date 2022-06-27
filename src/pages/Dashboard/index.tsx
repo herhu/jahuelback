@@ -1,10 +1,10 @@
 import React, { FC, useEffect, useState } from 'react'
 import { Layout, Menu, Spin, Avatar } from 'antd'
 import Inventory from '../Inventory'
-import { getProgram } from '../../api/services'
+import { getProgram } from '../../api/services/jahuel'
 import Availability from '../Availability'
 import Programs from '../Programs'
-import { logout } from '../../api/services'
+import { logout } from '../../api/services/auth'
 import logo from '.././../logo512.png'
 import './index.css'
 import {
@@ -12,10 +12,14 @@ import {
   MenuFoldOutlined,
   UserOutlined
 } from '@ant-design/icons'
+import { useNavigate } from 'react-router-dom'
 
 const { Header, Sider, Content, Footer } = Layout
 
 const Dashboard: FC = () => {
+
+  const navigate = useNavigate()
+
   useEffect(() => {
     getProgram()
       .then(response => setPrograms(response.data.data))
@@ -51,10 +55,15 @@ const Dashboard: FC = () => {
     }
   }
 
+  const LogoutHandle  = async () => {
+    let res = await logout()
+    res && navigate('/')
+  }
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider
-        trigger={<span onClick={e => logout()}>Cerrar Session </span>}
+        trigger={<span onClick={LogoutHandle}>Cerrar Session </span>}
         collapsible
         collapsed={collapsed}
       >
