@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import Calendar from '../../components/Calendar'
-import { Divider, DatePicker, InputNumber, Select, Form, Button } from 'antd'
+import {
+  Divider,
+  DatePicker,
+  InputNumber,
+  Select,
+  Form,
+  Button,
+  Space
+} from 'antd'
 import { DayPilot } from 'daypilot-pro-react'
 import { IprogramOracle } from '../../interfaces/IProgram'
 import { IInventoryHotel } from '../../interfaces/IInventory'
@@ -87,50 +95,56 @@ const Inventory = (props: TProps) => {
         onFinish={onFinish}
         form={form}
         validateMessages={validateMessages}
-        style={{ display: 'flex', justifyContent: 'space-between' }}
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap-reverse'
+        }}
       >
-        <Form.Item name={['programa']} rules={[{ required: true }]}>
-          <Select allowClear placeholder={'Programas'}>
-            {props.programs.map((q, i) => (
-              <Option key={i}>{q.PROGRAM}</Option>
-            ))}
-          </Select>
-        </Form.Item>
-        <Form.Item name={['fecha']} rules={[{ required: true }]}>
-          <RangePicker
-            placeholder={['Fecha entrada', 'Fecha salida']}
-            onChange={(e, a) => setDates(a)}
-          />
-        </Form.Item>
-        <Form.Item
-          name={['Superior']}
-          rules={[{ required: true, type: 'number', min: 1, max: 46 }]}
-          label='Superior(46)'
-        >
-          <InputNumber placeholder={'Cantidad'} min={1} max={46} />
-        </Form.Item>
-        <Form.Item
-          name={['Vip']}
-          rules={[{ required: true, type: 'number', min: 1, max: 14 }]}
-          label='Vip(14)'
-        >
-          <InputNumber placeholder={'Cantidad'} min={1} max={14} />
-        </Form.Item>
-        <Form.Item
-          name={['Clasicas']}
-          rules={[{ required: true, type: 'number', min: 1, max: 20 }]}
-          label='Clasica(20)'
-        >
-          <InputNumber placeholder={'Cantidad'} min={1} max={20} />
-        </Form.Item>
-        <Form.Item>
-          <Button type='primary' htmlType='submit'>
-            Cargar
-          </Button>
-        </Form.Item>
-        <Form.Item>
-          <PopoverPicker color={color} onChange={setColor} />
-        </Form.Item>
+        <Space  align="center" size={[8, 16]} wrap>
+          <Form.Item name={['programa']} rules={[{ required: true }]}>
+            <Select allowClear placeholder={'Programas'}>
+              {props.programs.map((q, i) => (
+                <Option key={i}>{q.PROGRAM}</Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item name={['fecha']} rules={[{ required: true }]}>
+            <RangePicker
+              placeholder={['Fecha entrada', 'Fecha salida']}
+              onChange={(e, a) => setDates(a)}
+            />
+          </Form.Item>
+          <Form.Item
+            name={['Superior']}
+            rules={[{ required: true, type: 'number', min: 1, max: 46 }]}
+            label='Superior(46)'
+          >
+            <InputNumber placeholder={'Cantidad'} min={1} max={46} />
+          </Form.Item>
+          <Form.Item
+            name={['Vip']}
+            rules={[{ required: true, type: 'number', min: 1, max: 14 }]}
+            label='Vip(14)'
+          >
+            <InputNumber placeholder={'Cantidad'} min={1} max={14} />
+          </Form.Item>
+          <Form.Item
+            name={['Clasicas']}
+            rules={[{ required: true, type: 'number', min: 1, max: 20 }]}
+            label='Clasica(20)'
+          >
+            <InputNumber placeholder={'Cantidad'} min={1} max={20} />
+          </Form.Item>
+          <Form.Item>
+            <Button type='primary' htmlType='submit'>
+              Cargar
+            </Button>
+          </Form.Item>
+          <Form.Item>
+            <PopoverPicker color={color} onChange={setColor} />
+          </Form.Item>
+        </Space>
       </Form>
       <Divider />
       <div>

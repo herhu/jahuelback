@@ -4,6 +4,8 @@ import Inventory from '../Inventory'
 import { getProgram } from '../../api/services'
 import Availability from '../Availability'
 import Programs from '../Programs'
+import { logout } from '../../api/services'
+import logo from '.././../logo512.png'
 import './index.css'
 import {
   MenuUnfoldOutlined,
@@ -11,7 +13,7 @@ import {
   UserOutlined
 } from '@ant-design/icons'
 
-const { Header, Sider, Content } = Layout
+const { Header, Sider, Content, Footer } = Layout
 
 const Dashboard: FC = () => {
   useEffect(() => {
@@ -50,18 +52,25 @@ const Dashboard: FC = () => {
   }
 
   return (
-    <Layout style={{ height: '100%' }}>
-      <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div style={{ padding: '10px' }}>
+    <Layout style={{ minHeight: '100vh' }}>
+      <Sider
+        trigger={<span onClick={e => logout()}>Cerrar Session </span>}
+        collapsible
+        collapsed={collapsed}
+      >
+        <div
+          style={{ padding: '10px', marginTop: '20px', marginBottom: '20px' }}
+        >
           {collapsed ? (
-            <Avatar size="large" icon={<UserOutlined />} />
+            <Avatar size='large' src={logo} />
           ) : (
-            <Avatar size={64} icon={<UserOutlined />} />
+            <Avatar size={64} src={logo} />
           )}
         </div>
         <Menu
           theme='dark'
           mode='inline'
+          style={{ lineHeight: '64px' }}
           defaultSelectedKeys={['1']}
           onClick={item => setMenu(item.key)}
           items={[
@@ -98,6 +107,9 @@ const Dashboard: FC = () => {
             {ContentToShow(menuSelected)}
           </Spin>
         </Content>
+        {/* <Footer style={{ textAlign: 'center' }}>
+          Developers ©2022 Created by delabyron
+        </Footer> */}
       </Layout>
     </Layout>
   )

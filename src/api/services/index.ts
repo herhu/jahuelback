@@ -12,6 +12,7 @@ export const signIn = async (email: string, password: string) => {
         password
     })
 }
+export const logout = async () => instance.post('/auth/logout')
 
 export const getProgram = async () => instance.get('/backoffice/program')
 
