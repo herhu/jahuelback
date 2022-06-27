@@ -30,21 +30,18 @@ const CCalendar = (props: TProps) => {
       showWeekend: true,
       startDate: date,
       onEventMoved: (args: any) => {
-        args.control.message('Event moved: ' + args.e.text())
         updateDateIn(args.e.data.id, {
           start: args.newStart.value,
           end: args.newEnd.value
         })
       },
       onEventResized: (args: any) => {
-        args.control.message('Event resized: ' + args.e.text())
         updateDateIn(args.e.data.id, {
           start: args.newStart.value,
           end: args.newEnd.value
         })
       },
       onEventClicked: (args: any) => {
-        args.control.message('Event clicked: ' + args.e.text())
         setVisible(true)
         setProgramClicked(args.e.data)
       },
@@ -54,8 +51,8 @@ const CCalendar = (props: TProps) => {
 
   const updateDateIn = (id: string, data: IUpdateDateInventory) => {
     updateDateInventory(id, data)
-      .then(() => openNotificationWithIcon('success', 'Fechas ctualizadas conrrectamente'))
-      .catch(() => openNotificationWithIcon('error', 'No se ha podido actualizar el calendario'))
+      .then(() => openNotificationWithIcon('success', '', 'Fechas actualizadas'))
+      .catch(() => openNotificationWithIcon('error', '', 'No se ha podido actualizar el calendario'))
   }
   const previous = () => {
     let previousDate = date.addMonths(-1)

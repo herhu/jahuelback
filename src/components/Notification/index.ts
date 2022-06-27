@@ -3,9 +3,6 @@ import { notification } from 'antd'
 
 type NotificationType = 'success' | 'info' | 'warning' | 'error'
 
-export const openNotificationWithIcon = (type: NotificationType, text: string) => {
-    notification[type]({
-      message: 'Ha ocurrido un Error',
-      description: text
-    })
-  }
+export const openNotificationWithIcon = (type: NotificationType, message: string, description: string,) => notification[type]({ message, description })
+
+

@@ -23,9 +23,9 @@ export const login = async (data: IUserLogin) => {
 
     } catch (error: any) {
         if (error.response.data) {
-            openNotificationWithIcon('error', error.response.data.errors.message)
+            openNotificationWithIcon('error', '', error.response.data.errors.message)
         } else {
-            openNotificationWithIcon('error', error.message)
+            openNotificationWithIcon('error', '', error.message)
         }
 
         return false
@@ -73,9 +73,9 @@ export const logout = async () => {
 
     } catch (error: any) {
         if (error.response.data) {
-            openNotificationWithIcon('error', error.response.data.errors.message)
+            openNotificationWithIcon('error', '', error.response.data.errors.message)
         } else {
-            openNotificationWithIcon('error', error.message)
+            openNotificationWithIcon('error', '', error.message)
         }
 
         return false
