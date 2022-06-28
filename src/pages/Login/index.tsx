@@ -1,8 +1,8 @@
 import React, { FC } from 'react'
-import { Form, Input, Button, Checkbox } from 'antd'
+import { Form, Input, Button } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { login } from '../../api/services/auth'
-
+import logo from '.././../logo512.png'
 interface TUser {
   id: string
   email: string
@@ -10,7 +10,6 @@ interface TUser {
   name: string
   role: string
 }
-
 const Demo: FC = () => {
   const navigate = useNavigate()
 
@@ -32,14 +31,15 @@ const Demo: FC = () => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100vh'
+        flexDirection: 'column'
       }}
     >
+      <img src={logo} width='20%' />
       <Form
         name='basic'
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
-        initialValues={{ remember: true, email: 'admin@admin.com' }}
+        initialValues={{ remember: true, email: '' }}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         autoComplete='off'
@@ -60,17 +60,9 @@ const Demo: FC = () => {
           <Input.Password />
         </Form.Item>
 
-        <Form.Item
-          name='remember'
-          valuePropName='checked'
-          wrapperCol={{ offset: 8, span: 16 }}
-        >
-          <Checkbox>Remember me</Checkbox>
-        </Form.Item>
-
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
           <Button type='primary' htmlType='submit'>
-            Submit
+            Entrar
           </Button>
         </Form.Item>
       </Form>
