@@ -21,6 +21,7 @@ interface TProps {
 const CCalendar = (props: TProps) => {
   const [visible, setVisible] = useState(false)
   const [config, setConfig] = useState({})
+  const [newDate, setNewDate] = useState({ start: '', end: '' })
   const [programClicked, setProgramClicked] = useState<IInventoryHotel>()
   const [date, setDate] = useState(DayPilot.Date.today())
 
@@ -29,11 +30,31 @@ const CCalendar = (props: TProps) => {
       locale: 'es-es',
       showWeekend: true,
       startDate: date,
+      eventEndSpec: 'Date',
       onEventMoved: (args: any) => {
         updateDateIn(args.e.data.id, {
           start: args.newStart.value,
           end: args.newEnd.value
         })
+      },
+      onBeforeCellRender: (args: any) => {
+        if (args.cell.start === DayPilot.Date.today()) {
+          args.cell.properties.areas = [
+            {
+              left: 0,
+              right: 0,
+              bottom: 0,
+              height: 20,
+              backColor: '#6aa84f',
+              fontColor: '#ffffff',
+              text: 'HOY',
+              horizontalAlignment: 'center'
+            }
+          ]
+        }
+        if (args.cell.start < DayPilot.Date.today()) {
+          args.cell.properties.disabled = true
+        }
       },
       onEventResized: (args: any) => {
         updateDateIn(args.e.data.id, {
@@ -51,8 +72,17 @@ const CCalendar = (props: TProps) => {
 
   const updateDateIn = (id: string, data: IUpdateDateInventory) => {
     updateDateInventory(id, data)
-      .then(() => openNotificationWithIcon('success', '', 'Fechas actualizadas'))
-      .catch(() => openNotificationWithIcon('error', '', 'No se ha podido actualizar el calendario'))
+      .then(response => {
+        openNotificationWithIcon('success', '', 'Fechas actualizadas')
+        setNewDate({ start: data.start, end: data.end })
+      })
+      .catch(() =>
+        openNotificationWithIcon(
+          'error',
+          '',
+          'No se ha podido actualizar el calendario'
+        )
+      )
   }
   const previous = () => {
     let previousDate = date.addMonths(-1)
@@ -69,6 +99,7 @@ const CCalendar = (props: TProps) => {
       <Modal
         visible={visible}
         inventory={programClicked as IInventoryHotel}
+        newDate={newDate}
         onOk={() => setVisible(false)}
         onCancel={() => setVisible(false)}
       />

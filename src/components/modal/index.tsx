@@ -17,6 +17,7 @@ interface Tprops {
   visible: boolean
   onOk: () => void
   onCancel: () => void
+  newDate: { start: string; end: string }
 }
 
 const { CheckableTag } = Tag
@@ -26,25 +27,42 @@ const { TabPane } = Tabs
 const App = (props: Tprops) => {
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [room, setRoom] = useState<IroomOracle>()
+  const [status, setStatus] = useState(false)
+  const [inventory, setInventory] = useState<IInventoryHotel>()
 
   useEffect(() => {
     if (props.inventory) {
-      setSelectedTags([props.inventory.rooms[0].ROOM_TYPE])
-      setRoom(props.inventory.rooms[0])
+      let invt = props.inventory
+
+      setSelectedTags([invt.rooms[0].ROOM_TYPE])
+      setRoom(invt.rooms[0])
+      setStatus(props.inventory.active)
+
+      if (typeof invt.start === 'string') {
+        invt.start = props.inventory.start.split('T')[0]
+        invt.end = props.inventory.end.split('T')[0]
+      } else {
+        invt.start = props.newDate.start.split('T')[0]
+        invt.end = props.newDate.end.split('T')[0]
+      }
+      setInventory(invt)
     }
-  }, [props.inventory])
+  }, [props.inventory, props.newDate])
 
   const handleChange = (tag: string, checked: boolean, room: IroomOracle) => {
     const nextSelectedTags = checked
       ? [tag]
       : selectedTags.filter(t => t !== tag)
     setSelectedTags(nextSelectedTags)
-    console.log(room)
     setRoom(room)
   }
 
+const UpdateStatus = (tab: string) => {
+  console.log(tab)
+}
+
   const renderContent = (column = 1) => (
-    <Skeleton active loading={props.inventory ? false : true}>
+    <Skeleton active loading={inventory ? false : true}>
       <Descriptions size='small' style={{ width: '50%' }} column={column}>
         <Descriptions.Item label='Precio Single'>
           <a> {room && room.SINGLE}</a>
@@ -86,15 +104,12 @@ const App = (props: Tprops) => {
     >
       <Statistic
         title='Comienza'
-        value={props.inventory && props.inventory.start.split('T')[0]}
+        value={inventory && inventory.start}
         style={{
           marginRight: 32
         }}
       />
-      <Statistic
-        title='Finaliza'
-        value={props.inventory && props.inventory.end.split('T')[0]}
-      />
+      <Statistic title='Finaliza' value={inventory && inventory.end} />
     </div>
   )
   const Content: React.FC<{
@@ -102,8 +117,8 @@ const App = (props: Tprops) => {
     extra: React.ReactNode
   }> = ({ children, extra }) => (
     <div className='content'>
-      {props.inventory
-        ? props.inventory.rooms.map((room, i) => (
+      {inventory
+        ? inventory.rooms.map((room, i) => (
             <CheckableTag
               key={i}
               checked={selectedTags.indexOf(room.ROOM_TYPE) > -1}
@@ -121,7 +136,6 @@ const App = (props: Tprops) => {
       <div className='extra'>{extra}</div>
     </div>
   )
-
   return (
     <Modal
       centered
@@ -132,22 +146,12 @@ const App = (props: Tprops) => {
     >
       <PageHeader
         className='site-page-header-responsive'
-        title={props.inventory ? props.inventory.program : ''}
-        subTitle={
-          props.inventory ? `${props.inventory.rooms.length} Habitaciones` : ''
-        }
+        title={inventory ? inventory.program : ''}
+        subTitle={inventory ? `${inventory.rooms.length} Habitaciones` : ''}
         footer={
-          <Tabs
-            defaultActiveKey={
-              props.inventory
-                ? props.inventory.active === true
-                  ? '1'
-                  : '2'
-                : '2'
-            }
-          >
-            <TabPane tab='Público' key='1' />
-            <TabPane tab='Privado' key='2' />
+          <Tabs activeKey={status ? '1' : '2'} onChange={(key) => UpdateStatus(key)}>
+            <TabPane tab='Abrir' key='1' />
+            <TabPane tab='Cerrar' key='2' />
           </Tabs>
         }
       >
