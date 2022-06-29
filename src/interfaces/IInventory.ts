@@ -19,11 +19,21 @@ export interface IInventoryHotelDate {
     backColor?: string
     program: string
     start: { value: string }
-    end: { value: String } 
+    end: { value: String }
     rooms: Array<IroomOracle>
 }
 
 export interface IUpdateDateInventory {
-    start: string,
+    start: string
     end: string
+}
+
+export interface IUpdateStatusInventory {
+    active: boolean
+}
+
+export interface IUpdateAvailabilityInventory {
+    AVAILABLE: number
+    ROOM_TYPE: string
+    INVENTORY: number
 }

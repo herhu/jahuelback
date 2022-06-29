@@ -34,13 +34,12 @@ const validateMessages = {
 const Inventory = (props: TProps) => {
   const [inventories, setInventories] = useState<IInventoryHotel[]>([])
   const [dates, setDates] = useState<Array<String>>([])
+  const [loading, setLoading] = useState(true)
   const [color, setColor] = useState('#aabbcc')
   const [form] = Form.useForm()
 
   useEffect(() => {
-    getInventory()
-      .then(response => setInventories(response.data.data))
-      .catch(error => console.log(error))
+    getInventories()
   }, [])
 
   const building = async (values: any) => {
@@ -89,6 +88,15 @@ const Inventory = (props: TProps) => {
       .catch(error => console.log(error))
   }
 
+  const getInventories = async () => {
+    getInventory()
+      .then(response => {
+        setLoading(false)
+        setInventories(response.data.data)
+      })
+      .catch(error => console.log(error))
+  }
+
   return (
     <div>
       <Form
@@ -101,7 +109,7 @@ const Inventory = (props: TProps) => {
           flexWrap: 'wrap-reverse'
         }}
       >
-        <Space  align="center" size={[8, 16]} wrap>
+        <Space align='center' size={[8, 16]} wrap>
           <Form.Item name={['programa']} rules={[{ required: true }]}>
             <Select allowClear placeholder={'Programas'}>
               {props.programs.map((q, i) => (
@@ -148,7 +156,13 @@ const Inventory = (props: TProps) => {
       </Form>
       <Divider />
       <div>
-        <Calendar programs={props.programs} inventories={inventories} />
+        <Calendar
+          programs={props.programs}
+          loading={loading}
+          setLoading={setLoading}
+          getInventories={getInventories}
+          inventories={inventories}
+        />
       </div>
     </div>
   )

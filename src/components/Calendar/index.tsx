@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import 'antd/dist/antd.css'
 import './index.css'
 import { DayPilot, DayPilotMonth } from 'daypilot-pro-react'
-import { Space, Divider, Statistic } from 'antd'
+import { Space, Divider, Statistic, Skeleton } from 'antd'
 import { IprogramOracle } from '../../interfaces/IProgram'
 import { openNotificationWithIcon } from '../../components/Notification'
 import {
@@ -16,6 +16,9 @@ import Modal from '../modal'
 interface TProps {
   programs: IprogramOracle[]
   inventories: IInventoryHotel[]
+  loading: boolean
+  getInventories: () => Promise<void>
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const CCalendar = (props: TProps) => {
@@ -38,6 +41,14 @@ const CCalendar = (props: TProps) => {
         })
       },
       onBeforeCellRender: (args: any) => {
+        if (programClicked) {
+          
+          let inventory = props.inventories.filter(
+            invt => invt.id === programClicked.id
+          )[0]
+
+          setProgramClicked(inventory)
+        }
         if (args.cell.start === DayPilot.Date.today()) {
           args.cell.properties.areas = [
             {
@@ -88,19 +99,21 @@ const CCalendar = (props: TProps) => {
     let previousDate = date.addMonths(-1)
     setDate(previousDate)
   }
-
   const next = () => {
     let NextDate = date.addMonths(1)
     setDate(NextDate)
   }
 
   return (
-    <>
+    <Skeleton active loading={props.loading}>
       <Modal
         visible={visible}
+        setVisible={setVisible}
+        setLoading={props.setLoading}
         inventory={programClicked as IInventoryHotel}
         newDate={newDate}
-        onOk={() => setVisible(false)}
+        loading={props.loading}
+        getInventories={props.getInventories}
         onCancel={() => setVisible(false)}
       />
       <Space style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -120,7 +133,7 @@ const CCalendar = (props: TProps) => {
         </Space>
       </Space>
       <DayPilotMonth {...config} />
-    </>
+    </Skeleton>
   )
 }
 export default CCalendar
