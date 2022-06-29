@@ -42,7 +42,6 @@ const CCalendar = (props: TProps) => {
       },
       onBeforeCellRender: (args: any) => {
         if (programClicked) {
-          
           let inventory = props.inventories.filter(
             invt => invt.id === programClicked.id
           )[0]
@@ -104,6 +103,38 @@ const CCalendar = (props: TProps) => {
     setDate(NextDate)
   }
 
+  const setMonthToName = (): string => {
+    switch (date.getMonth()) {
+      case 0:
+        return 'Enero'
+      case 1:
+        return 'Febrero'
+      case 2:
+        return 'Marzo'
+      case 3:
+        return 'Abril'
+      case 4:
+        return 'Mayo'
+      case 5:
+        return 'Junio'
+      case 6:
+        return 'Julio'
+      case 7:
+        return 'Agosto'
+      case 8:
+        return 'Septiembre'
+      case 9:
+        return 'Octubre'
+      case 10:
+        return 'Noviembre'
+      case 11:
+        return 'Diciembre'
+      default:
+        return ''
+        break
+    }
+  }
+
   return (
     <Skeleton active loading={props.loading}>
       <Modal
@@ -119,6 +150,8 @@ const CCalendar = (props: TProps) => {
       <Space style={{ display: 'flex', justifyContent: 'space-between' }}>
         <Space>
           <Statistic title='Año' groupSeparator='' value={date.getYear()} />
+          <Divider type='vertical' />
+          <Statistic title='Mes' groupSeparator='' value={setMonthToName()} />
           <Divider type='vertical' />
           <Statistic
             title='Programas activos'

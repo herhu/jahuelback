@@ -125,24 +125,24 @@ const Inventory = (props: TProps) => {
           </Form.Item>
           <Form.Item
             name={['Superior']}
-            rules={[{ required: true, type: 'number', min: 1, max: 46 }]}
+            rules={[{ required: true, type: 'number', min: 0, max: 46 }]}
             label='Superior(46)'
           >
-            <InputNumber placeholder={'Cantidad'} min={1} max={46} />
+            <InputNumber placeholder={'Cantidad'} min={0} max={46} />
           </Form.Item>
           <Form.Item
             name={['Vip']}
-            rules={[{ required: true, type: 'number', min: 1, max: 14 }]}
+            rules={[{ required: true, type: 'number', min: 0, max: 14 }]}
             label='Vip(14)'
           >
-            <InputNumber placeholder={'Cantidad'} min={1} max={14} />
+            <InputNumber placeholder={'Cantidad'} min={0} max={14} />
           </Form.Item>
           <Form.Item
             name={['Clasicas']}
-            rules={[{ required: true, type: 'number', min: 1, max: 20 }]}
+            rules={[{ required: true, type: 'number', min: 0, max: 20 }]}
             label='Clasica(20)'
           >
-            <InputNumber placeholder={'Cantidad'} min={1} max={20} />
+            <InputNumber placeholder={'Cantidad'} min={0} max={20} />
           </Form.Item>
           <Form.Item>
             <Button type='primary' htmlType='submit'>
