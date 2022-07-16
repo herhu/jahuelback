@@ -4,6 +4,7 @@ import {
   Divider,
   DatePicker,
   InputNumber,
+  message,
   Select,
   Form,
   Button,
@@ -15,6 +16,7 @@ import { IInventoryHotel } from '../../interfaces/IInventory'
 import { getInventory, saveInventory } from '../../api/services/jahuel'
 import 'antd/dist/antd.css'
 import { PopoverPicker } from '../../components/PopoverPicker'
+import moment from 'moment'
 
 const { RangePicker } = DatePicker
 
@@ -36,6 +38,8 @@ const Inventory = (props: TProps) => {
   const [dates, setDates] = useState<Array<String>>([])
   const [loading, setLoading] = useState(true)
   const [color, setColor] = useState('#aabbcc')
+  const [pickerType, setPickerType] = useState(0)
+  const [program, setProgram] = useState('')
   const [form] = Form.useForm()
 
   useEffect(() => {
@@ -97,6 +101,89 @@ const Inventory = (props: TProps) => {
       .catch(error => console.log(error))
   }
 
+  const DayOffCalendar = (index: number) => {
+    if (index) {
+      let Iprogram = props.programs[index].PROGRAM
+      setProgram(Iprogram)
+      if (Iprogram === 'PROG. TEMPORADA BAJA LUNES A JUEVES') {
+        setPickerType(1)
+      } else if (
+        Iprogram === 'PROGRAMA VIERNES A DOMINGO BAJA' ||
+        Iprogram === 'PROGRAMA VIERNES A DOMINGO ALTA'
+      ) {
+        setPickerType(2)
+      } else {
+        setPickerType(0)
+      }
+    }
+  }
+
+  const DisableDates = (current: moment.Moment) => {
+    if (pickerType === 1) {
+      return (
+        (current && current < moment().endOf('day')) ||
+        moment(current).day() === 0 ||
+        moment(current).day() === 5 ||
+        moment(current).day() === 6
+      )
+    } else if (pickerType === 2) {
+      return (
+        (current && current < moment().endOf('day')) ||
+        moment(current).day() === 1 ||
+        moment(current).day() === 2 ||
+        moment(current).day() === 3 ||
+        moment(current).day() === 4
+      )
+    } else {
+      return current && current < moment().endOf('day')
+    }
+  }
+
+  const resetDates = () => {
+    form.resetFields(['fecha'])
+    message.warning('Seleccione sobre el rango de fechas disponibles')
+  }
+
+  const onChageDates = (Selected: string[]) => {
+    let start = moment(Selected[0], 'YYYY-MM-DD').week()
+    let end = moment(Selected[1], 'YYYY-MM-DD').week()
+
+    if (program === 'PROG. TEMPORADA BAJA LUNES A JUEVES') {
+      //same week
+      start === end ? setDates(Selected) : resetDates()
+    } else if (
+      program === 'PROGRAMA VIERNES A DOMINGO BAJA' ||
+      program === 'PROGRAMA VIERNES A DOMINGO ALTA'
+    ) {
+      let dayA = moment(Selected[0]).day()
+      let dayB = moment(Selected[1]).day()
+      console.log('start: ', start, ', end: ', end)
+
+      if (dayA === 0 && dayB === dayA && start === end) {
+        // only sunday same week
+        setDates(Selected)
+      } else if (
+        // friday to saturday same week
+        (dayA === 5 || dayA === 6) &&
+        (dayB === 5 || dayB === 6) &&
+        start === end
+      ) {
+        setDates(Selected)
+      } else if (
+        (dayA === 5 || dayA === 6) &&
+        dayB === 0 &&
+        start + 1 === end
+      ) {
+        //friday to sunday different week
+        setDates(Selected)
+      } else {
+        resetDates()
+      }
+    } else {
+      setDates(Selected)
+    }
+  }
+
   return (
     <div>
       <Form
@@ -111,7 +198,11 @@ const Inventory = (props: TProps) => {
       >
         <Space align='center' size={[8, 16]} wrap>
           <Form.Item name={['programa']} rules={[{ required: true }]}>
-            <Select allowClear placeholder={'Programas'}>
+            <Select
+              allowClear
+              placeholder={'Programas'}
+              onChange={i => DayOffCalendar(i)}
+            >
               {props.programs.map((q, i) => (
                 <Option key={i}>{q.PROGRAM}</Option>
               ))}
@@ -119,8 +210,9 @@ const Inventory = (props: TProps) => {
           </Form.Item>
           <Form.Item name={['fecha']} rules={[{ required: true }]}>
             <RangePicker
+              disabledDate={current => DisableDates(current)}
               placeholder={['Fecha entrada', 'Fecha salida']}
-              onChange={(e, a) => setDates(a)}
+              onChange={(e, a) => onChageDates(a)}
             />
           </Form.Item>
           <Form.Item
