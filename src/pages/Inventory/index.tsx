@@ -141,7 +141,7 @@ const Inventory = (props: TProps) => {
 
   const resetDates = () => {
     form.resetFields(['fecha'])
-    message.warning('Seleccione sobre el rango de fechas disponibles')
+    message.warning('Seleccione fechas dentro del rango disponible')
   }
 
   const onChageDates = (Selected: string[]) => {
